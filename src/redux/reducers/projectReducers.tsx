@@ -1,5 +1,11 @@
 import { AnyAction } from 'redux'
-import {ADDPROJ, DELETEPROJ} from '../constants'
+import {ADDPROJ, DELETEPROJ, ADDTASK, UPDATETASK, DELETETASK} from '../constants'
+
+interface IProject {
+    projects: any[]
+    projectID: string
+    data: any
+}
 
 const initState = {
     data: [],
@@ -16,23 +22,33 @@ const ProjectReducers = (state = initState, action: AnyAction) => {
             let dataMap: any[] = state.data
             let pushData: any = action.payload
             dataMap.push(pushData)
-            dataMap.reverse()
             return {
                 ...state,
                 data: dataMap,
                 notif: action.notif,
                 isLoading: false
             }
-        case DELETEPROJ:
-            let currentData: any[] = state.data
-            let popData: any = action.payload
-            currentData.filter(data => data.projName !== popData)
+        case ADDTASK:
+            let {projects, projectID, data}: IProject = action.payload
+            projects.map(project => {
+                if (project.projectID === projectID) {
+                    project.tasks.push(data)
+                }
+            })
             return {
                 ...state,
-                data: currentData,
+                data: projects,
                 notif: action.notif,
                 isLoading: false
             }
+        case DELETEPROJ:
+            return {
+                ...state,
+                data: action.payload,
+                notif: action.notif,
+                isLoading: false
+            }
+            
         default: 
             return {
                 ...state
