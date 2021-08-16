@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux'
-import {ADDPROJ, DELETEPROJ, ADDTASK, UPDATETASK, DELETETASK} from '../constants'
+import {ADDPROJ, DELETEPROJ, ADDTASK} from '../constants'
 
 interface IProject {
     projects: any[]

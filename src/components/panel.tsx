@@ -3,11 +3,14 @@ import { Card, Modal, Button, ListGroup, Row, Col } from 'react-bootstrap'
 import { TextField } from '@material-ui/core'
 import DataTable from './dataTable'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { useDispatch, connect } from 'react-redux'
-import { addProject } from '../redux/actions/actionList'
+import { connect } from 'react-redux'
+import { addProject} from '../redux/actions/actionList'
 import { IconButton, Snackbar } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import { v4 as uuidv4 } from 'uuid'
+
+import CanvasJSReact from '../assets/canvasjs.react'
+let CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 interface IProp {
     page: string
@@ -15,12 +18,11 @@ interface IProp {
     finance: any
     routine: any
     goal: any
+    ProjectAdded: (params: any) => void
 }
 
 const Panel: React.FC<IProp> = props => {
-    const { page, project, finance, routine, goal } = props
-
-    const dispatch = useDispatch()
+    const { page, project, finance, routine, goal, ProjectAdded } = props
 
     const [projName, setProjName] = useState('')
     const [openSnack, setOpenSnack] = useState(false)
@@ -30,6 +32,27 @@ const Panel: React.FC<IProp> = props => {
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false)
+
+    let allTasks = project.data.length > 0 ? project.data.map((row: any) => row.tasks).reduce((a: any, b: any) => a.concat(b)).length : 0
+
+    const options = {
+        title: {
+            text: "Monthly Reports"
+        },
+        data: [
+            {
+                type: "column",
+                dataPoints: [
+                    {label: "Projects", y: allTasks},
+                    {label: "Monthly Expense", y: finance.expenses.length},
+                    {label: "Monthly Income", y: finance.income.length},
+                    {label: "Monthly Savings", y: finance.savings.length},
+                    {label: "Routines", y: routine.data.length},
+                    {label: "Goals", y: goal.data.length}
+                ]
+            }
+        ]
+    }
 
     const AddProjBtn = () => {
         setShow(false)
@@ -42,11 +65,14 @@ const Panel: React.FC<IProp> = props => {
         }
         setMsg(project.notif.msg)
         setOpenSnack(true)
-        dispatch(addProject(payload))
+        ProjectAdded(payload)
     }
 
     return (
         <React.Fragment>
+            {page === 'dashboard' && (
+                <CanvasJSChart options={options}/>
+            )}
             {page === 'projects' && (
                 <div>
                     <Card className="p-4">
@@ -141,7 +167,7 @@ const Panel: React.FC<IProp> = props => {
                     </Card>
                 </div>
             )}
-            {page === 'timetable' && (
+            {page === 'routines' && (
                 <div>
                     <Card className="p-4">
                         <div className="d-flex justify-content-between pb-3">
@@ -153,37 +179,23 @@ const Panel: React.FC<IProp> = props => {
                     </Card>
                 </div>
             )}
-            {page === 'dashboard' && (
-                <div className="d-flex justify-content-around">
-                    <div>
-                        <h5 className="text-light">Projects</h5>
-                        <b className="text-light">{project.data.length}</b>
-                    </div>
-                    <div>
-                        <h5 className="text-light">Finances</h5>
-                        <b className="text-light">{finance.expenses.length}</b>
-                    </div>
-                    <div>
-                        <h5 className="text-light">Routines</h5>
-                        <b className="text-light">{routine.data.length}</b>
-                    </div>
-                    <div>
-                        <h5 className="text-light">Goals</h5>
-                        <b className="text-light">{goal.data.length}</b>
-                    </div>
-                </div>
-            )}
         </React.Fragment>
     )
 }
 
 const mapStateToProps = (state: any) => {
     return {
-        project: state.project,
-        finance: state.finance,
-        routine: state.routine,
-        goal: state.goal
+        project: state.projects,
+        finance: state.finances,
+        routine: state.routines,
+        goal: state.goals
     }
 }
 
-export default connect(mapStateToProps)(Panel)
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        ProjectAdded: (project: any) => dispatch(addProject(project))
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Panel)

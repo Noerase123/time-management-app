@@ -1,8 +1,8 @@
-import {ADDPROJ, DELETEPROJ, VIEWTASK, ADDTASK, DELETETASK, UPDATETASK} from '../constants'
+import * as c from '../constants'
 
 export const addProject = (payload: any) => {
     return {
-        type: ADDPROJ,
+        type: c.ADDPROJ,
         notif: {
             snack: true,
             msg: 'Project Added'
@@ -13,7 +13,7 @@ export const addProject = (payload: any) => {
 
 export const deleteProject = (payload: any) => {
     return {
-        type: DELETEPROJ,
+        type: c.DELETEPROJ,
         notif: {
             snack: true,
             msg: 'Project Deleted'
@@ -24,7 +24,7 @@ export const deleteProject = (payload: any) => {
 
 export const addTask = (projects: any[], projectID: string, data: any) => {
     return {
-        type: ADDTASK,
+        type: c.ADDTASK,
         notif: {
             snack: true,
             msg: 'Task Added'

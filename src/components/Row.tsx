@@ -66,19 +66,22 @@ const Row = (props: IProp) => {
   const [taskName, setTaskName] = React.useState('')
   const [desc, setDesc] = React.useState('')
   const [startDate, setStartDate] = React.useState('')
-  const [progress] = React.useState('On-progress')
+
+  //add task function
   const handleAddTask = () => {
     const payload = {
       taskName: taskName,
       description: desc,
-      progress: progress,
+      progress: 'On-progress',
       dateStarted: startDate,
       dateEnded: null
     }
     taskDispatchOne(project.data, row.projectID, payload)
     handleCloseModal()
   }
-  const handleDeleteTask = () => {
+
+  //delete task function
+  const handleDeleteProj = () => {
     const dataArr: any[] = project.data
     let index = dataArr.map((item) => item.projectID).indexOf(row.projectID)
     if (index > -1) {
@@ -215,7 +218,7 @@ const Row = (props: IProp) => {
 
       <Modal show={showEdit} onHide={handleEditClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Task Details ({progress})</Modal.Title>
+            <Modal.Title>Task Details (On-progress)</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           {/* <form noValidate autoComplete="off"> */}
@@ -268,7 +271,7 @@ const Row = (props: IProp) => {
             <Button variant="outlined" color="primary" onClick={handleAlertclose} disabled={alertBtn} style={{marginRight: 10}}>
               cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={handleDeleteTask} disabled={alertBtn}>
+            <Button variant="contained" color="primary" onClick={handleDeleteProj} disabled={alertBtn}>
               Yes
             </Button>
           </Modal.Footer>
@@ -280,7 +283,7 @@ const Row = (props: IProp) => {
 
 const MapStateToProps = (state: any) => {
   return {
-    project: state.project
+    project: state.projects
   }
 }
 
